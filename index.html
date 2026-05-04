@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>小悟 AI错题本</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:system-ui,-apple-system,sans-serif;color:#2C2C36;background:#FBF7F0;display:flex}
+.sidebar{width:260px;height:100%;background:#1C1F2E;display:flex;flex-direction:column;flex-shrink:0;transition:transform .3s;z-index:100}
+.sidebar-hd{padding:16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px}
+.logo{width:36px;height:36px;background:linear-gradient(135deg,#E85D4A,#F09060);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff}
+.sidebar-hd h1{font-size:15px;color:#E8E8F0}
+.sidebar-hd p{font-size:11px;color:#9B9BB0}
+.btn-new{margin:12px 12px 6px;padding:10px 14px;background:rgba(255,255,255,.06);border:1px dashed rgba(255,255,255,.15);border-radius:8px;color:#E8E8F0;font-size:13px;cursor:pointer;text-align:left}
+.btn-set{margin:0 12px 6px;padding:8px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#9B9BB0;font-size:12px;cursor:pointer;text-align:left}
+.slist{flex:1;overflow-y:auto;padding:6px}
+.sitem{display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:7px;cursor:pointer;margin-bottom:2px}
+.sitem:hover{background:#262940}
+.sitem.on{background:#2F3350}
+.stag{font-size:9px;padding:1px 5px;border-radius:3px;font-weight:700}
+.stit{flex:1;font-size:12px;color:#9B9BB0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sitem.on .stit{color:#E8E8F0}
+.sdel{width:20px;height:20px;border:none;background:0 0;color:#9B9BB0;font-size:14px;cursor:pointer;opacity:0}
+.sitem:hover .sdel{opacity:1}
+.sf{padding:10px 12px;border-top:1px solid rgba(255,255,255,.06);font-size:10px;color:#9B9BB0;text-align:center;line-height:1.6}
+.main{flex:1;height:100%;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.page{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.gone{display:none!important}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:90}
+.ov.show{display:block}
+#pHome{align-items:center;justify-content:center}
+.home{text-align:center;max-width:400px;padding:24px 16px}
+.home .ico{font-size:48px;margin-bottom:16px}
+.home h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.home .desc{font-size:14px;color:#6E6E80;line-height:1.7;margin-bottom:24px}
+.steps{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;text-align:left}
+.stp{display:flex;align-items:center;gap:10px;padding:11px 14px;background:#FFF;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.stp b{width:22px;height:22px;background:#FFF0ED;color:#E85D4A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.stp span{font-size:13px;color:#6E6E80}
+.btn-go{padding:12px 28px;background:#E85D4A;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer}
+#pSet{align-items:center;justify-content:center;padding:16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.scard{background:#FFF;border-radius:14px;padding:24px 20px;max-width:460px;width:100%;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.scard h2{font-size:18px;text-align:center;margin-bottom:4px}
+.scard .sub{font-size:13px;color:#6E6E80;text-align:center;margin-bottom:18px}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:13px;font-weight:700;color:#6E6E80;margin-bottom:5px}
+.fg input{width:100%;padding:10px 12px;border:1px solid #E8E2D6;border-radius:8px;font-size:14px;color:#2C2C36;background:#FBF7F0;-webkit-appearance:none}
+.fg input:focus{outline:none;border-color:#E85D4A}
+.fg .hint{font-size:11px;color:#A0A0B0;margin-top:4px}
+.pps{display:flex;flex-wrap:wrap;gap:6px}
+.pp{padding:5px 12px;border:1px solid #E8E2D6;border-radius:16px;background:0 0;font-size:12px;color:#6E6E80;cursor:pointer}
+.pp.on{background:#E85D4A;border-color:#E85D4A;color:#fff}
+.sact{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.btn-sv{padding:10px 22px;background:#E85D4A;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
+.btn-sk{padding:10px 14px;border:1px solid #E8E2D6;border-radius:8px;background:0 0;font-size:13px;color:#6E6E80;cursor:pointer}
+.tst{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px;display:none}
+.tok{background:#E8F8EF;color:#3BA676;border:1px solid #3BA676}
+.ter{background:#FFF0ED;color:#E85D4A;border:1px solid #E85D4A}
+#pForm{align-items:center;justify-content:center;padding:16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.fcard{background:#FFF;border-radius:14px;padding:24px 20px;max-width:460px;width:100%;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.fcard h2{font-size:18px;text-align:center;margin-bottom:18px}
+.fcard textarea{width:100%;padding:10px 12px;border:1px solid #E8E2D6;border-radius:8px;font-size:14px;color:#2C2C36;background:#FBF7F0;resize:vertical;line-height:1.6;-webkit-appearance:none}
+.fcard textarea:focus{outline:none;border-color:#E85D4A}
+.fcard textarea::placeholder{color:#A0A0B0}
+.fact{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.btn-cc{padding:8px 14px;border:1px solid #E8E2D6;border-radius:7px;background:0 0;font-size:13px;color:#6E6E80;cursor:pointer}
+.btn-ok{padding:8px 18px;background:#E85D4A;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer}
+#pChat{display:flex;flex-direction:column}
+.chd{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid #E8E2D6;background:rgba(255,255,255,.85);flex-shrink:0}
+.chdl{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.btn-bk{padding:4px 6px;border:none;background:0 0;font-size:13px;color:#A0A0B0;cursor:pointer;flex-shrink:0}
+.chn{font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctg{font-size:10px;padding:1px 6px;border-radius:8px;font-weight:700;flex-shrink:0}
+.btn-ma{padding:4px 10px;border:1px solid #E8E2D6;border-radius:6px;background:0 0;font-size:11px;color:#A0A0B0;cursor:pointer;flex-shrink:0}
+.btn-ma.on{background:#E8F8EF;border-color:#3BA676;color:#3BA676}
+.cms{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
+.msg{display:flex;gap:8px;max-width:88%}
+.msg-u{align-self:flex-end;flex-direction:row-reverse}
+.msg-a{align-self:flex-start}
+.mav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.msg-u .mav{background:#FFF0ED;color:#E85D4A}
+.msg-a .mav{background:linear-gradient(135deg,#E85D4A,#F09060);color:#fff}
+.mbu{padding:10px 14px;border-radius:14px;line-height:1.7;font-size:14px;word-break:break-word}
+.msg-u .mbu{background:#F0EBE0;border-bottom-right-radius:4px}
+.msg-a .mbu{background:#FFF;box-shadow:0 1px 3px rgba(0,0,0,.04);border-bottom-left-radius:4px}
+.mbu p{margin-bottom:5px}.mbu p:last-child{margin-bottom:0}
+.mbu strong{color:#E85D4A}
+.mbu code{font-family:monospace;font-size:12px;background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px}
+.mbu pre{background:#1E1E2E;color:#CDD6F4;padding:12px;border-radius:8px;overflow-x:auto;margin:8px 0;font-size:12px;line-height:1.5}
+.mbu pre code{background:0 0;padding:0;color:inherit}
+.mbu ol,.mbu ul{padding-left:18px;margin:6px 0}
+.mbu li{margin-bottom:3px}
+.mbu blockquote{border-left:3px solid #E85D4A;padding-left:10px;margin:6px 0;color:#6E6E80}
+.typ{display:flex;gap:4px;padding:4px 0}
+.typ span{width:6px;height:6px;border-radius:50%;background:#A0A0B0;animation:db 1.4s ease-in-out infinite}
+.typ span:nth-child(2){animation-delay:.2s}
+.typ span:nth-child(3){animation-delay:.4s}
+@keyframes db{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+.cin{display:flex;align-items:flex-end;gap:8px;padding:10px 16px;border-top:1px solid #E8E2D6;background:rgba(255,255,255,.85);flex-shrink:0}
+.cin textarea{flex:1;padding:8px 12px;border:1px solid #E8E2D6;border-radius:10px;font-size:14px;color:#2C2C36;background:#FFF;resize:none;max-height:100px;line-height:1.5;-webkit-appearance:none}
+.cin textarea:focus{outline:none;border-color:#E85D4A}
+.btn-sd{width:36px;height:36px;border:none;background:#E85D4A;color:#fff;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.btn-sd:disabled{opacity:.5}
+.mob{display:none;position:fixed;top:10px;left:10px;z-index:200;width:36px;height:36px;border:none;background:#FFF;border-radius:7px;box-shadow:0 4px 16px rgba(0,0,0,.06);font-size:16px;cursor:pointer;align-items:center;justify-content:center}
+@media(max-width:768px){
+  .mob{display:flex}
+  .sidebar{position:fixed;left:0;top:0;transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:4px 0 24px rgba(0,0,0,.3)}
+  .chd{padding-left:50px}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sb">
+  <div class="sidebar-hd"><div class="logo">悟</div><div><h1>小悟</h1><p>AI 错题本</p></div></div>
+  <button class="btn-new" id="bNew">＋ 记录新错题</button>
+  <button class="btn-set" id="bSetNav">⚙ API 设置</button>
+  <div class="slist" id="sL"></div>
+  <div class="sf">© 落雨纪元算法与数据研究中心团队<br>第一代 · 测试版</div>
+</aside>
+
+<div class="ov" id="ov"></div>
+<button class="mob" id="mb">☰</button>
+
+<div class="main">
+
+  <div class="page" id="pHome">
+    <div class="home">
+      <div class="ico">📖</div>
+      <h2>小悟 · AI错题本</h2>
+      <p class="desc">输入你的错题，我不会直接告诉你答案，<br>而是一步步引导你自己想明白。</p>
+      <div class="steps">
+        <div class="stp"><b>1</b><span>输入错题和你的错误答案</span></div>
+        <div class="stp"><b>2</b><span>我会分析你的错误原因</span></div>
+        <div class="stp"><b>3</b><span>通过提问引导你找到正确思路</span></div>
+      </div>
+      <button class="btn-go" id="bGo">开始纠错 →</button>
+      <p style="margin-top:24px;font-size:11px;color:#A0A0B0;line-height:1.7;">
+        此产品由落雨纪元所开发发行<br>
+        官网: www.luoyeltd.com.cn<br>
+        © 落雨纪元算法与数据研究中心团队
+      </p>
+    </div>
+  </div>
+
+  <div class="page gone" id="pSet">
+    <div class="scard">
+      <h2>⚙ API 设置</h2>
+      <p class="sub">配置你的 AI 服务</p>
+      <div class="fg">
+        <label>选择服务商</label>
+        <div class="pps" id="pps">
+          <button class="pp on" data-u="https://api.deepseek.com" data-m="deepseek-chat" data-h="DeepSeek">DeepSeek</button>
+          <button class="pp" data-u="https://dashscope.aliyuncs.com/compatible-mode/v1" data-m="qwen-plus" data-h="通义千问">通义千问</button>
+          <button class="pp" data-u="https://api.openai.com/v1" data-m="gpt-4o-mini" data-h="OpenAI">OpenAI</button>
+          <button class="pp" data-u="https://api.moonshot.cn/v1" data-m="moonshot-v1-8k" data-h="月之暗面">月之暗面</button>
+          <button class="pp" data-u="https://open.bigmodel.cn/api/paas/v4" data-m="glm-4-flash" data-h="智谱AI">智谱AI</button>
+        </div>
+      </div>
+      <div class="fg">
+        <label>API Key</label>
+        <input type="password" id="iKey" placeholder="sk-xxxxxxxxxxxxxxxx">
+        <p class="hint" id="pHint">DeepSeek: platform.deepseek.com 注册后获取</p>
+      </div>
+      <div class="fg">
+        <label>API 地址</label>
+        <input type="text" id="iUrl" placeholder="https://api.deepseek.com">
+      </div>
+      <div class="fg">
+        <label>模型名称</label>
+        <input type="text" id="iMod" placeholder="deepseek-chat">
+      </div>
+      <div class="tst" id="tRes"></div>
+      <div class="sact">
+        <button class="btn-sk" id="bSk">返回</button>
+        <button class="btn-sv" id="bSv">保存并测试</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page gone" id="pForm">
+    <div class="fcard">
+      <h2>📝 记录一道新错题</h2>
+      <div class="fg">
+        <label>学科</label>
+        <div class="pps" id="fps">
+          <button class="pp on" data-s="数学">📐 数学</button>
+          <button class="pp" data-s="物理">⚡ 物理</button>
+          <button class="pp" data-s="化学">🧪 化学</button>
+          <button class="pp" data-s="英语">🔤 英语</button>
+          <button class="pp" data-s="语文">📖 语文</button>
+          <button class="pp" data-s="其他">📌 其他</button>
+        </div>
+      </div>
+      <div class="fg">
+        <label>题目内容</label>
+        <textarea id="iQ" rows="3" placeholder="把题目抄在这里……"></textarea>
+      </div>
+      <div class="fg">
+        <label>我的错误答案</label>
+        <textarea id="iA" rows="2" placeholder="你当时是怎么做的？"></textarea>
+      </div>
+      <div class="fact">
+        <button class="btn-cc" id="bCc">取消</button>
+        <button class="btn-ok" id="bOk">开始分析 →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page gone" id="pChat">
+    <div class="chd">
+      <div class="chdl">
+        <button class="btn-bk" id="bBk">← 返回</button>
+        <span class="chn" id="cN"></span>
+        <span class="ctg" id="cT"></span>
+      </div>
+      <button class="btn-ma" id="cM">⬜ 已掌握</button>
+    </div>
+    <div class="cms" id="cMs"></div>
+    <div class="cin">
+      <textarea id="cI" placeholder="输入你的想法……" rows="1"></textarea>
+      <button class="btn-sd" id="cS">➤</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+
+// === Simple Markdown ===
+function md(t){
+  if(!t)return'';
+  t=t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  t=t.replace(/```([\s\S]*?)```/g,'<pre><code>$1</code></pre>');
+  t=t.replace(/`([^`]+)`/g,'<code>$1</code>');
+  t=t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  t=t.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  t=t.replace(/^&gt;\s?(.+)$/gm,'<blockquote>$1</blockquote>');
+  t=t.replace(/\$\$([\s\S]*?)\$\$/g,'<div style="text-align:center;padding:8px 0;font-size:16px;">$1</div>');
+  t=t.replace(/\$([^$\n]+?)\$/g,'<em>$1</em>');
+  t=t.replace(/\n\n/g,'</p><p>');
+  t=t.replace(/\n/g,'<br>');
+  return'<p>'+t+'</p>';
+}
+
+// === State ===
+var sess=[],sid=null,subj='数学',loading=false,cfg_ok=false;
+
+// === DOM ===
+var sidebar=document.getElementById('sb');
+var overlay=document.getElementById('ov');
+
+// === Storage ===
+function ldC(){try{return JSON.parse(localStorage.getItem('lc'))||{}}catch(e){return{}}}
+function svC(c){localStorage.setItem('lc',JSON.stringify(c))}
+function ldS(){try{sess=JSON.parse(localStorage.getItem('ls'))||[]}catch(e){sess=[]}rL()}
+function svS(){localStorage.setItem('ls',JSON.stringify(sess))}
+function ldM(id){try{return JSON.parse(localStorage.getItem('lm_'+id))||[]}catch(e){return[]}}
+function svM(id,m){localStorage.setItem('lm_'+id,JSON.stringify(m))}
+
+// === Sidebar ===
+function oSb(){sidebar.classList.add('open');overlay.classList.add('show')}
+function cSb(){sidebar.classList.remove('open');overlay.classList.remove('show')}
+overlay.addEventListener('click',function(e){e.preventDefault();cSb()},false);
+overlay.addEventListener('touchend',function(e){e.preventDefault();cSb()},false);
+document.getElementById('mb').addEventListener('click',function(e){e.preventDefault();oSb()},false);
+document.getElementById('mb').addEventListener('touchend',function(e){e.preventDefault();oSb()},false);
+document.getElementById('bNew').addEventListener('click',function(){cSb();oF()},false);
+document.getElementById('bSetNav').addEventListener('click',function(){cSb();oSet()},false);
+
+// === Screen ===
+function show(id){
+  var ps=document.getElementsByClassName('page');
+  for(var i=0;i<ps.length;i++)ps[i].classList.add('gone');
+  document.getElementById(id).classList.remove('gone');
+}
+
+// === Config ===
+function ckC(){var c=ldC();cfg_ok=!!c.key;if(!cfg_ok)show('pSet')}
+
+function oSet(){
+  var c=ldC();
+  document.getElementById('iKey').value=c.key||'';
+  document.getElementById('iUrl').value=c.url||'https://api.deepseek.com';
+  document.getElementById('iMod').value=c.mod||'deepseek-chat';
+  document.getElementById('tRes').style.display='none';
+  show('pSet');
+}
+
+document.getElementById('pps').addEventListener('click',function(e){
+  var p=e.target;
+  while(p&&!p.classList.contains('pp'))p=p.parentNode;
+  if(!p||!p.dataset.u)return;
+  var all=document.getElementById('pps').getElementsByClassName('pp');
+  for(var i=0;i<all.length;i++)all[i].classList.remove('on');
+  p.classList.add('on');
+  document.getElementById('iUrl').value=p.dataset.u;
+  document.getElementById('iMod').value=p.dataset.m;
+  document.getElementById('pHint').textContent=p.dataset.h+': '+p.dataset.u+' 注册后获取';
+},false);
+
+document.getElementById('bSv').addEventListener('click',doSave,false);
+document.getElementById('bSk').addEventListener('click',function(){show(sid?'pChat':'pHome')},false);
+
+function doSave(){
+  var key=document.getElementById('iKey').value.trim();
+  var url=document.getElementById('iUrl').value.trim();
+  var mod=document.getElementById('iMod').value.trim();
+  if(!key){document.getElementById('iKey').focus();return}
+  var btn=document.getElementById('bSv');
+  var el=document.getElementById('tRes');
+  btn.textContent='测试中...';btn.disabled=true;
+
+  var xhr=new XMLHttpRequest();
+  xhr.open('POST',url+'/chat/completions',true);
+  xhr.setRequestHeader('Content-Type','application/json');
+  xhr.setRequestHeader('Authorization','Bearer '+key);
+  xhr.timeout=15000;
+  xhr.onload=function(){
+    if(xhr.status>=200&&xhr.status<300){
+      svC({key:key,url:url,mod:mod});
+      cfg_ok=true;
+      el.style.display='block';el.className='tst tok';
+      el.textContent='✅ 配置成功！';
+      setTimeout(function(){show('pHome')},1200);
+    }else{
+      var msg='连接失败';
+      try{msg=JSON.parse(xhr.responseText).error.message}catch(e){}
+      el.style.display='block';el.className='tst ter';
+      el.textContent='❌ '+msg;
+    }
+    btn.textContent='保存并测试';btn.disabled=false;
+  };
+  xhr.onerror=function(){
+    el.style.display='block';el.className='tst ter';
+    el.textContent='❌ 网络错误';
+    btn.textContent='保存并测试';btn.disabled=false;
+  };
+  xhr.ontimeout=function(){
+    el.style.display='block';el.className='tst ter';
+    el.textContent='❌ 超时';
+    btn.textContent='保存并测试';btn.disabled=false;
+  };
+  xhr.send(JSON.stringify({model:mod,messages:[{role:'user',content:'hi'}],max_tokens:5}));
+}
+
+// === Sessions ===
+function rL(){
+  var el=document.getElementById('sL');
+  if(!sess.length){el.innerHTML='<p style="color:#9B9BB0;text-align:center;padding:24px 12px;font-size:12px;">还没有错题记录</p>';return}
+  var h='';
+  for(var i=0;i<sess.length;i++){
+    var s=sess[i];
+    h+='<div class="sitem'+(s.id===sid?' on':'')+'" data-id="'+s.id+'">';
+    h+='<span class="stag" style="background:rgba(74,143,231,.15);color:#7AB3F0">'+s.sub+'</span>';
+    h+='<span class="stit">'+esc(s.tit)+'</span>';
+    h+='<button class="sdel" data-del="'+s.id+'">×</button></div>';
+  }
+  el.innerHTML=h;
+}
+
+document.getElementById('sL').addEventListener('click',function(e){
+  var d=e.target;
+  if(d.classList.contains('sdel')){e.stopPropagation();delS(d.dataset.del);return}
+  while(d&&!d.classList.contains('sitem'))d=d.parentNode;
+  if(d&&d.dataset.id){openS(d.dataset.id);cSb()}
+},false);
+
+function delS(id){
+  if(!confirm('确定删除？'))return;
+  var ns=[];
+  for(var i=0;i<sess.length;i++){if(sess[i].id!==id)ns.push(sess[i])}
+  sess=ns;
+  localStorage.removeItem('lm_'+id);
+  svS();
+  if(sid===id){sid=null;show('pHome')}
+  rL();
+}
+
+// === Form ===
+function oF(){
+  if(!cfg_ok){oSet();return}
+  show('pForm');
+  document.getElementById('iQ').value='';
+  document.getElementById('iA').value='';
+  document.getElementById('iQ').focus();
+}
+
+document.getElementById('bGo').addEventListener('click',oF,false);
+document.getElementById('bCc').addEventListener('click',function(){show(sid?'pChat':'pHome')},false);
+document.getElementById('bOk').addEventListener('click',doSubmit,false);
+document.getElementById('bBk').addEventListener('click',function(){sid=null;show('pHome');rL()},false);
+
+// === Open Session ===
+function openS(id){
+  sid=id;
+  var s=null;
+  for(var i=0;i<sess.length;i++){if(sess[i].id===id){s=sess[i];break}}
+  document.getElementById('cN').textContent=s.tit;
+  var tg=document.getElementById('cT');
+  tg.textContent=s.sub;
+  tg.style.cssText='background:rgba(74,143,231,.15);color:#4A8FE7;font-size:10px;padding:1px 6px;border-radius:8px;font-weight:700';
+  setM(s.ma);
+  show('pChat');
+  var msgs=ldM(id);
+  var el=document.getElementById('cMs');
+  var h='';
+  for(var i=0;i<msgs.length;i++)h+=mH(msgs[i]);
+  el.innerHTML=h;
+  sB();
+  rL();
+}
+
+document.getElementById('cM').addEventListener('click',function(){
+  if(!sid)return;
+  var s=null;
+  for(var i=0;i<sess.length;i++){if(sess[i].id===sid){s=sess[i];break}}
+  s.ma=s.ma?0:1;
+  svS();setM(s.ma);rL();
+},false);
+
+function setM(v){
+  var b=document.getElementById('cM');
+  b.textContent=v?'✅ 已掌握':'⬜ 已掌握';
+  if(v)b.classList.add('on');else b.classList.remove('on');
+}
+
+// === Submit ===
+function doSubmit(){
+  var q=document.getElementById('iQ').value.trim();
+  var a=document.getElementById('iA').value.trim();
+  if(!q){document.getElementById('iQ').focus();return}
+  var id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  sess.unshift({id:id,tit:q.slice(0,30)+(q.length>30?'...':''),sub:subj,ma:0});
+  sid=id;svS();
+  document.getElementById('cN').textContent=q.slice(0,30);
+  var tg=document.getElementById('cT');
+  tg.textContent=subj;
+  tg.style.cssText='background:rgba(74,143,231,.15);color:#4A8FE7;font-size:10px;padding:1px 6px;border-radius:8px;font-weight:700';
+  setM(0);
+  show('pChat');rL();
+  var msg='【题目】\n'+q;
+  if(a)msg+='\n\n【我的错误答案】\n'+a;
+  document.getElementById('cMs').innerHTML='';
+  addM({r:'u',c:msg},true);
+  doAI();
+}
+
+// === Chat ===
+document.getElementById('cS').addEventListener('click',doSend,false);
+
+function doSend(){
+  var inp=document.getElementById('cI');
+  var t=inp.value.trim();
+  if(!t||loading)return;
+  inp.value='';inp.style.height='auto';
+  addM({r:'u',c:t},true);
+  doAI();
+}
+
+function doAI(){
+  showTyp();loading=true;
+  document.getElementById('cS').disabled=true;
+  var cfg=ldC();
+  var msgs=ldM(sid);
+  var arr=[{role:'system',content:SYS}];
+  for(var i=0;i<msgs.length;i++)arr.push({role:msgs[i].r==='u'?'user':'assistant',content:msgs[i].c});
+
+  var xhr=new XMLHttpRequest();
+  xhr.open('POST',cfg.url+'/chat/completions',true);
+  xhr.setRequestHeader('Content-Type','application/json');
+  xhr.setRequestHeader('Authorization','Bearer '+cfg.key);
+  xhr.timeout=30000;
+  xhr.onload=function(){
+    hideTyp();
+    if(xhr.status>=200&&xhr.status<300){
+      try{
+        var d=JSON.parse(xhr.responseText);
+        addM({r:'a',c:d.choices[0].message.content},true);
+        for(var i=0;i<sess.length;i++){if(sess[i].id===sid){svS();rL();break}}
+      }catch(e){addM({r:'a',c:'❌ 解析失败'},true)}
+    }else{
+      var msg='请求失败';
+      try{msg=JSON.parse(xhr.responseText).error.message}catch(e){}
+      addM({r:'a',c:'❌ '+msg},true);
+    }
+    loading=false;document.getElementById('cS').disabled=false;
+  };
+  xhr.onerror=function(){hideTyp();addM({r:'a',c:'❌ 网络错误'},true);loading=false;document.getElementById('cS').disabled=false};
+  xhr.ontimeout=function(){hideTyp();addM({r:'a',c:'❌ 超时'},true);loading=false;document.getElementById('cS').disabled=false};
+  xhr.send(JSON.stringify({model:cfg.mod,messages:arr,temperature:0.7,max_tokens:800}));
+}
+
+// === Messages ===
+function addM(m,save){
+  document.getElementById('cMs').insertAdjacentHTML('beforeend',mH(m));
+  sB();
+  if(save){var msgs=ldM(sid);msgs.push(m);svM(sid,msgs)}
+}
+
+function mH(m){
+  var u=m.r==='u';
+  return'<div class="msg '+(u?'msg-u':'msg-a')+'">'+
+    (u?'':'<div class="mav">悟</div>')+
+    '<div class="mbu">'+md(m.c)+'</div>'+
+    (u?'<div class="mav">我</div>':'')+'</div>';
+}
+
+function showTyp(){
+  document.getElementById('cMs').insertAdjacentHTML('beforeend',
+    '<div class="msg msg-a" id="td"><div class="mav">悟</div><div class="mbu"><div class="typ"><span></span><span></span><span></span></div></div></div>');
+  sB();
+}
+function hideTyp(){var e=document.getElementById('td');if(e)e.parentNode.removeChild(e)}
+function sB(){var c=document.getElementById('cMs');c.scrollTop=c.scrollHeight}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+// === Subject pills ===
+document.getElementById('fps').addEventListener('click',function(e){
+  var p=e.target;
+  while(p&&!p.classList.contains('pp'))p=p.parentNode;
+  if(!p||!p.dataset.s)return;
+  var all=document.getElementById('fps').getElementsByClassName('pp');
+  for(var i=0;i<all.length;i++)all[i].classList.remove('on');
+  p.classList.add('on');subj=p.dataset.s;
+},false);
+
+// === Chat input ===
+var cI=document.getElementById('cI');
+cI.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doSend()}},false);
+cI.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'},false);
+
+// === System Prompt ===
+var SYS='你是"小悟"，一位温暖耐心的AI学习辅导伙伴。\n\n'+
+'关于你自己：你叫"小悟"，由落雨纪元算法与数据研究中心团队所开发，当前是第一代测试版本。\n\n'+
+'核心原则：\n'+
+'- 绝不直接给出正确答案，引导学生自己发现错误\n'+
+'- 每次只引导一步，循序渐进\n'+
+'- 用提问代替讲解\n\n'+
+'引导流程：\n'+
+'1. 诊断错因：肯定态度，分析错误类型，指出出错环节但不展示正确做法\n'+
+'2. 启发思考：提出精准的引导性问题\n'+
+'3. 递进提示：给更具体的提示或类比\n'+
+'4. 巩固总结：肯定进步，总结知识点\n\n'+
+'语言风格：用"你"称呼，亲切自然，回复80-200字。数学公式用LaTeX格式。\n\n'+
+'特殊情况：学生要答案就温和拒绝；信息不完整就请补充；答对就热情肯定。';
+
+// === Init ===
+ldS();ckC();
+
+})();
+</script>
+</body>
+</html>
