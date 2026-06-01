@@ -1,0 +1,174 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "落雨",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [
+							{
+								"text": "+",
+								"fontSize": "22px",
+								"width": "40px",
+								"float": "right"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/world/world",
+			"style": {
+				"navigationBarTitleText": "小世界"
+			}
+		},
+		{
+			"path": "pages/mine/mine",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
+		},
+		{
+			"path": "pages/chat/chat",
+			"style": {
+				"navigationBarTitleText": "",
+				"app-plus": {
+					"softinputMode": "adjustResize",
+					"titleNView": {
+						"buttons": [
+							{
+								"text": "设置",
+								"fontSize": "14px",
+								"width": "50px",
+								"float": "right"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/ai-add/ai-add",
+			"style": {
+				"navigationBarTitleText": "添加AI伴侣"
+			}
+		},
+		{
+			"path": "pages/setting/setting",
+			"style": {
+				"navigationBarTitleText": "更多设置"
+			}
+		},
+		{
+			"path": "pages/api-setting/api-setting",
+			"style": {
+				"navigationBarTitleText": "API设置"
+			}
+		},
+		{
+			"path": "pages/chat-setting/chat-setting",
+			"style": {
+				"navigationBarTitleText": "聊天设置"
+			}
+		},
+		{
+			"path": "pages/memory/memory",
+			"style": {
+				"navigationBarTitleText": "Ta的记忆"
+			}
+		},
+		{
+			"path": "pages/chat-bg/chat-bg",
+			"style": {
+				"navigationBarTitleText": "聊天背景"
+			}
+		},
+		{
+			"path": "pages/profile/profile",
+			"style": {
+				"navigationBarTitleText": "个人信息"
+			}
+		},
+		{
+			"path": "pages/changelog/changelog",
+			"style": {
+				"navigationBarTitleText": "更新说明"
+			}
+		},
+		{
+			"path": "pages/team/team",
+			"style": {
+				"navigationBarTitleText": "开发团队"
+			}
+		},
+		{
+			"path": "pages/donate/donate",
+			"style": {
+				"navigationBarTitleText": "支持我们"
+			}
+		},
+		{
+			"path": "pages/thanks/thanks",
+			"style": {
+				"navigationBarTitleText": "特别鸣谢"
+			}
+		},
+		{
+			"path": "pages/service/service",
+			"style": {
+				"navigationBarTitleText": "联系我们"
+			}
+		},
+		{
+			"path": "pages/agreement/agreement",
+			"style": {
+				"navigationBarTitleText": "用户协议"
+			}
+		},
+		{
+			"path": "pages/filing/filing",
+			"style": {
+				"navigationBarTitleText": "备案信息"
+			}
+		},
+		{
+			"path": "pages/about/about",
+			"style": {
+				"navigationBarTitleText": "关于软件"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarBackgroundColor": "#E8E8E8",
+		"backgroundColor": "#F5F5F5"
+	},
+	"tabBar": {
+		"color": "#999999",
+		"selectedColor": "#E8936A",
+		"backgroundColor": "#FFFFFF",
+		"borderStyle": "black",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"text": "消息",
+				"iconPath": "static/tab-messages.png",
+				"selectedIconPath": "static/tab-messages-active.png"
+			},
+			{
+				"pagePath": "pages/world/world",
+				"text": "小世界",
+				"iconPath": "static/tab-world.png",
+				"selectedIconPath": "static/tab-world-active.png"
+			},
+			{
+				"pagePath": "pages/mine/mine",
+				"text": "我的",
+				"iconPath": "static/tab-mine.png",
+				"selectedIconPath": "static/tab-mine-active.png"
+			}
+		]
+	}
+}

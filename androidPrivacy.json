@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "prompt": "template",
+  "title": "服务协议和隐私政策",
+  "message": "在使用本应用前，请您仔细阅读并了解以下条款：\n\n《用户协议》和《隐私政策》\n\n我们会严格按照相关法律法规保护您的个人信息安全。点击\"同意\"即表示您已阅读并同意全部条款。",
+  "buttonAccept": "同意",
+  "buttonRefuse": "暂不使用",
+  "href": "https://lorian-ht.clearyuntech.cn/agreement.html",
+  "second": {
+    "title": "确认提示",
+    "message": "进入应用即表示您同意相关条款。如您不同意，我们将无法继续为您提供服务。",
+    "buttonAccept": "同意并继续",
+    "buttonRefuse": "退出应用"
+  },
+  "styles": {
+    "backgroundColor": "#F5F5F5",
+    "borderRadius": "10px",
+    "title": {
+      "color": "#2D2A26"
+    },
+    "message": {
+      "color": "#555555"
+    },
+    "buttonAccept": {
+      "color": "#FFFFFF",
+      "background": "#E8936A"
+    },
+    "buttonRefuse": {
+      "color": "#999999",
+      "background": "#F0F0F0"
+    }
+  }
+}
